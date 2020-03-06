@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ControlType } from './models/base-type';
 
 @Component({
   selector: 'app-root',

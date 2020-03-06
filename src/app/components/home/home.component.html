@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="row d-flex justify-content-center">
+    <div class="col col-12 col-sm-10">
+      <form [formGroup]="form">
+        <div class="row">
+          <div class="col col-12 col-sm-6">
+            <fieldset class="form-group">
+              <label>Column name</label>
+              <input class="form-control" type="text" formControlName="name">
+            </fieldset>
+          </div>
+          <div class="col col-12 col-sm-6">
+            <fieldset class=form-group>
+              <label>Column type</label>
+              <select #mySelect class="form-control" formControlName="controlType">
+                <option></option>
+                <option *ngFor="let control of controls" [value]="control">{{ control }}</option>
+              </select>
+            </fieldset>
+          </div>
+        </div>
+        <div class="row" *ngIf="mySelect.value === 'select'">
+          <div class="col col-10 col-sm-6 w-100">
+            <div class="row form-group">
+              <div class="col col-8 col-sm-9">
+                <input #myInput class="form-control" placeholder="Add an option here" type="text">
+              </div>
+              <div class="col col-4 col-sm-3 py-0">
+                <button class="btn btn-success btn-block" (click)="addSelectOption(myInput.value); myInput.value = ''">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="col col-10 col-sm-6 w-100" *ngIf="selectOptions?.length">
+            <div class="row form-group">
+              <div class="col col-8 col-sm-9">
+                <select #myOptions class="form-control">
+                  <option *ngFor="let option of selectOptions" [value]="option">{{ option }}</option>
+                </select>
+              </div>
+              <div class="col col-4 col-sm-3 py-0">
+                <button class="btn btn-danger btn-block" (click)="removeSelectOption($event)">-</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col col-12 col-sm-12">
+            <fieldset class="form-check from-control">
+              <input type="checkbox" class="form-check-input" formControlName="required">
+              <label class="form-check-label">Required</label>
+            </fieldset>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col col-12 col-sm-12 mt-2">
+            <button type="submit" class="btn btn-primary" (click)="sendForm()">Add</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
