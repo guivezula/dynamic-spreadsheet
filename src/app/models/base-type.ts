@@ -10,12 +10,11 @@ export class BaseType<T> {
     type: string;
     options: string[];
 
-    constructor(options: Options<T> = {}) {
+    constructor(options: Option<T> = {}) {
       this.value = options.value;
       this.name = options.name || '';
       this.label = options.label || '';
       this.required = !!options.required;
-      this.controlType = options.controlType;
       this.type = options.type || '';
       this.options = options.options || [];
     }
@@ -28,12 +27,12 @@ export enum ControlType {
     'text',
 }
 
-export interface Options<T> {
+export interface Option<T> {
     value?: T;
     name?: string;
     label?: string;
     required?: boolean;
-    controlType?: ControlType;
+    controlType?: 'select' | 'number' | 'date' | 'text';
     type?: string;
     options?: string[];
 }
