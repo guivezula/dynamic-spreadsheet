@@ -3,20 +3,18 @@
  */
 export class BaseType<T> {
     value: T;
-    key: string;
+    name: string;
     label: string;
     required: boolean;
-    order: number;
     controlType: ControlType;
     type: string;
-    options: {key: string, value: string}[];
+    options: string[];
 
     constructor(options: Options<T> = {}) {
       this.value = options.value;
-      this.key = options.key || '';
+      this.name = options.name || '';
       this.label = options.label || '';
       this.required = !!options.required;
-      this.order = options.order === undefined ? 1 : options.order;
       this.controlType = options.controlType;
       this.type = options.type || '';
       this.options = options.options || [];
@@ -32,13 +30,12 @@ export enum ControlType {
 
 export interface Options<T> {
     value?: T;
-    key?: string;
+    name?: string;
     label?: string;
     required?: boolean;
-    order?: number;
     controlType?: ControlType;
     type?: string;
-    options?: {key: string, value: string}[];
+    options?: string[];
 }
 
 

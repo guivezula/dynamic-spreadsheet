@@ -25,7 +25,7 @@ export class TypeControlService {
     const group: any = {};
 
     types.forEach(type => {
-      group[type.key] = type.required ? new FormControl(type.value || '', Validators.required)
+      group[type.name] = type.required ? new FormControl(type.value || '', Validators.required)
         : new FormControl(type.value || '');
     });
     this.fb = new FormGroup(group);
@@ -37,7 +37,13 @@ export class TypeControlService {
    * Method receive a type of column and add at the FormGroup as FormControl
    */
   public addControl(type: BaseType<string>): void {
-    this.fb.addControl(type.key, type.required ? new FormControl(type.value || '', Validators.required)
+    this.fb.addControl(type.name, type.required ? new FormControl(type.value || '', Validators.required)
       : new FormControl(type.value || ''));
+  }
+
+  public updateControleKey(newKey: string, oldKey: string) {
+    const control = this.fb.get(oldKey);
+    this.fb.removeControl(oldKey);
+    this.fb.addControl(newKey, control);
   }
 }
