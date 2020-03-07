@@ -26,9 +26,7 @@ export class HomeComponent implements OnInit {
   public sendForm() {
     if (this.form.valid) {
       const option: Option<string> = this.form.getRawValue();
-      console.log(option);
       this.createType(option);
-      console.log(this.types);
     }
   }
 
@@ -36,6 +34,7 @@ export class HomeComponent implements OnInit {
    * @param option receive an option and add on the list
    */
   public addSelectOption(option: string) {
+    if (option === '') { return; }
     this.selectOptions.push(option);
   }
 
