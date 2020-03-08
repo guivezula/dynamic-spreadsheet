@@ -1,0 +1,16 @@
+<div class="container my-3">
+  <form *ngIf="tableForm" [formGroup]="tableForm">
+    <table class="table">
+      <thead>
+        <th *ngFor="let type of types$ | async">{{ type?.name }}</th>
+      </thead>
+      <tbody *ngFor="let control of frmArrayControls; let i = index">
+        <tr [formGroup]="control">
+          <td  class="form-group p-0" *ngFor="let type of types$ | async">
+            <input class="w-100 border-0">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>
