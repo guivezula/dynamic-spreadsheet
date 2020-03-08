@@ -1,10 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ControlType, Option, BaseType } from 'src/app/models/base-type';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectType } from 'src/app/models/select-type';
 import { DateType } from 'src/app/models/date-type';
 import { TextType } from 'src/app/models/text-type';
 import { NumberType } from 'src/app/models/number-type';
+import { TypeControlService } from 'src/app/services/type-control/type-control.service';
+import { of, Observable } from 'rxjs';
+import { TableComponent } from '../table/table.component';
+import { Store } from '@ngrx/store';
+import { loadTypes } from './store/types/types.actions';
+import { selectTypes } from './store/types/types.selectors';
 
 @Component({
   selector: 'app-home',
@@ -16,9 +22,13 @@ export class HomeComponent implements OnInit {
   public controls: string[] = [];
   public selectOptions: string[] = [];
   public form: FormGroup;
-  public types: BaseType<string>[] = [];
+  public types$: Observable<BaseType<string>[]>;
 
-  constructor(private fb: FormBuilder) { }
+  @ViewChild('myTable') myTable: TableComponent;
+
+  constructor(private fb: FormBuilder, private store: Store<any>) { }
+
+  // get types$() { return of(this.types); }
 
   /**
    * add type of control on component
@@ -28,6 +38,7 @@ export class HomeComponent implements OnInit {
       const option: Option<string> = this.form.getRawValue();
       this.createType(option);
     }
+    this.form.reset();
   }
 
   /**
@@ -73,27 +84,32 @@ export class HomeComponent implements OnInit {
    * this function return the TypeBase according to controlType
    */
   private createType(option: Option<string>) {
-    let type = null;
+    let baseType = null;
     switch (option.controlType) {
       case 'select':
-        type = new SelectType({...option, options: this.selectOptions });
+        baseType = new SelectType({...option, options: this.selectOptions });
         break;
       case 'text':
-        type = new TextType(option);
+        baseType = new TextType(option);
         break;
       case 'date':
-        type = new DateType(option);
+        baseType = new DateType(option);
         break;
       case 'number':
-        type = new NumberType(option);
+        baseType = new NumberType(option);
         break;
     }
-    this.types.push(type);
+    this.store.dispatch(loadTypes({ baseType }));
+  }
+
+  private getStates() {
+    this.types$ = this.store.select(selectTypes);
   }
 
   ngOnInit() {
     this.getControls();
     this.initForm();
+    this.getStates();
   }
 
 }
