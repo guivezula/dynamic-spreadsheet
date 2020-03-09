@@ -5,9 +5,7 @@ import { SelectType } from 'src/app/models/select-type';
 import { DateType } from 'src/app/models/date-type';
 import { TextType } from 'src/app/models/text-type';
 import { NumberType } from 'src/app/models/number-type';
-import { TypeControlService } from 'src/app/services/type-control/type-control.service';
 import { of, Observable } from 'rxjs';
-import { TableComponent } from '../../components/table/table.component';
 import { Store } from '@ngrx/store';
 import { selectTypes, selectData, selectMinRows } from 'src/app/reducers/data-table/data-table.selectors';
 import { updateTypes, updateTable, updateType, updateMinRows } from 'src/app/reducers/data-table/data-table.actions';
@@ -27,8 +25,6 @@ export class HomeComponent implements OnInit {
   public minRows$: Observable<number>;
 
   constructor(private fb: FormBuilder, private store: Store<any>) { }
-
-  // get types$() { return of(this.types); }
 
   /**
    * add type of control on component
@@ -58,15 +54,27 @@ export class HomeComponent implements OnInit {
     this.selectOptions.splice(index, 1);
   }
 
+  /**
+   * Receive the table emition and update the local storage
+   * @param data is the last updated data
+   */
   public updateTableCell(data: any[]) {
     this.store.dispatch(updateTable({ data }));
   }
 
+  /**
+   * Update the column, and the data according to the new name
+   * @param event receives the table emition
+   */
   public updateTableTitle(event: { index: number, newName: string, data: any[] }) {
     this.updateTableCell(event.data);
     this.store.dispatch(updateType(event));
   }
 
+  /**
+   * Update the minimun of rows on local storage
+   * @param minRows is  the emitted value from table
+   */
   public updateMinRows(minRows: number) {
     this.store.dispatch(updateMinRows({ minRows }));
   }
@@ -115,6 +123,9 @@ export class HomeComponent implements OnInit {
     this.store.dispatch(updateTypes({ baseType }));
   }
 
+  /**
+   * Get saved information on local storage
+   */
   private getStates() {
     this.types$ = this.store.select(selectTypes);
     this.data$ = this.store.select(selectData);
