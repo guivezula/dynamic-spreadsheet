@@ -8,19 +8,12 @@ import { Observable, of } from 'rxjs';
 })
 export class TypeControlService {
 
-  private fb: FormGroup;
-
-  constructor() {
-    const group: any = {};
-    this.fb = new FormGroup(group);
-  }
-
-  public get formGroup() { return this.fb; }
+  constructor() {}
 
   /**
    *
    * @param types
-   * method get all the types and create the FormGroup
+   * method get all the type of columns and create the FormGroup
    */
   public toFormGroup(types: BaseType<string>[]): FormGroup {
     const group: any = {};
@@ -30,31 +23,6 @@ export class TypeControlService {
         : new FormControl(type.value || '');
     });
     return new FormGroup(group);
-  }
-
-  /**
-   *
-   * @param type
-   * Method receive a type of column and add at the FormGroup as FormControl
-   */
-  public addControl(type: BaseType<string>): void {
-    this.fb.addControl(type.name, type.required ? new FormControl(type.value || '', Validators.required)
-      : new FormControl(type.value || ''));
-  }
-
-  public updateControleKey(newKey: string, oldKey: string) {
-    const control = this.fb.get(oldKey);
-    this.fb.removeControl(oldKey);
-    this.fb.addControl(newKey, control);
-  }
-
-  /**
-   *
-   * @param type
-   * Method receive the list of types to return a boservable
-   */
-  public getObsTypes(types: BaseType<string>[]): Observable<BaseType<string>[]> {
-    return of(types);
   }
 
 }
