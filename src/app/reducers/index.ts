@@ -1,29 +1,30 @@
 import { ActionReducerMap, MetaReducer, ActionReducer } from '@ngrx/store';
 import { localStorageSync } from 'ngrx-store-localstorage';
-import { TypesEffects } from '../modules/home/store/types/types.effects';
 
 // // Reducers
-import * as fromTypes from '../modules/home/store/types/types.reducer';
-// import * as fromSpecies from './species/species.reducer';
+import * as fromDataTable from './data-table/data-table.reducer';
 
 // // Effects
-// import { AuthEffects } from './auth/auth.effects';
-// import { SpeciesEffects } from './species/species.effects';
+import { DataTableEffects } from './data-table/data-table.effects';
 
 export function localStorageSyncReducer(myReducer: ActionReducer<any>): ActionReducer<any> {
   return localStorageSync({
-    keys: [],
+    keys: [{ dataTable: ['data', 'types', 'minRows'] }],
     rehydrate: true,
   })(myReducer);
 }
 
 // tslint:disable-next-line:no-empty-interface
 export interface State {
+  dataTable: fromDataTable.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
+  dataTable: fromDataTable.reducer,
 };
 
-export const effects = [];
+export const effects = [
+  DataTableEffects,
+];
 
 export const metaReducers: MetaReducer<State>[] = [localStorageSyncReducer];
