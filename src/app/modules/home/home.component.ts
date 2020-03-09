@@ -7,10 +7,10 @@ import { TextType } from 'src/app/models/text-type';
 import { NumberType } from 'src/app/models/number-type';
 import { TypeControlService } from 'src/app/services/type-control/type-control.service';
 import { of, Observable } from 'rxjs';
-import { TableComponent } from '../table/table.component';
+import { TableComponent } from '../../components/table/table.component';
 import { Store } from '@ngrx/store';
-import { loadTypes } from './store/types/types.actions';
-import { selectTypes } from './store/types/types.selectors';
+import { selectTypes, selectData, selectMinRows } from 'src/app/reducers/data-table/data-table.selectors';
+import { updateTypes, updateTable, updateType, updateMinRows } from 'src/app/reducers/data-table/data-table.actions';
 
 @Component({
   selector: 'app-home',
@@ -23,8 +23,8 @@ export class HomeComponent implements OnInit {
   public selectOptions: string[] = [];
   public form: FormGroup;
   public types$: Observable<BaseType<string>[]>;
-
-  @ViewChild('myTable') myTable: TableComponent;
+  public data$: Observable<any[]>;
+  public minRows$: Observable<number>;
 
   constructor(private fb: FormBuilder, private store: Store<any>) { }
 
@@ -56,6 +56,19 @@ export class HomeComponent implements OnInit {
     if (!option) { return; }
     const index = this.selectOptions.indexOf(option);
     this.selectOptions.splice(index, 1);
+  }
+
+  public updateTableCell(data: any[]) {
+    this.store.dispatch(updateTable({ data }));
+  }
+
+  public updateTableTitle(event: { index: number, newName: string, data: any[] }) {
+    this.updateTableCell(event.data);
+    this.store.dispatch(updateType(event));
+  }
+
+  public updateMinRows(minRows: number) {
+    this.store.dispatch(updateMinRows({ minRows }));
   }
 
   /**
@@ -99,11 +112,13 @@ export class HomeComponent implements OnInit {
         baseType = new NumberType(option);
         break;
     }
-    this.store.dispatch(loadTypes({ baseType }));
+    this.store.dispatch(updateTypes({ baseType }));
   }
 
   private getStates() {
     this.types$ = this.store.select(selectTypes);
+    this.data$ = this.store.select(selectData);
+    this.minRows$ = this.store.select(selectMinRows);
   }
 
   ngOnInit() {

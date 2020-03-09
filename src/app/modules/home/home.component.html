@@ -57,7 +57,7 @@
             <button type="submit" class="btn btn-primary"
               (click)="sendForm()"
               [disabled]="form.invalid || (mySelect.value === 'select' && !selectOptions?.length)">
-              Add
+              Add Column
             </button>
           </div>
         </div>
@@ -65,4 +65,13 @@
     </div>
   </div>
 </div>
-<app-table [types$]="types$"></app-table>
+<div class="pt-5">
+  <app-table
+    [types$]="types$"
+    [data]="data$ | async"
+    [minRows]="minRows$ | async"
+    (whenUpdateCell)="updateTableCell($event)"
+    (whenUpdateTitle)="updateTableTitle($event)"
+    (whenUpdateMinRows)="updateMinRows($event)">
+  </app-table>
+</div>
