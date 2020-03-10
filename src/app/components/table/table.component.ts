@@ -33,7 +33,7 @@ export class TableComponent implements OnInit, OnDestroy {
   /** get to return the controls of the form array */
   get frmArrayControls() { return (this.tableForm.get('data') as FormGroup).controls; }
 
-  /** return the control type to be compared on hmtl */
+  /** return the control type to be compared on html */
   get controlType() { return ControlType; }
 
   /**
