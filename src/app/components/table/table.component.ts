@@ -3,7 +3,7 @@ import { BaseType, ControlType } from 'src/app/models/base-type';
 import { TypeControlService } from 'src/app/services/type-control/type-control.service';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { Observable, of, Subscription } from 'rxjs';
-import { takeLast, take } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import * as R from 'ramda';
 
 @Component({

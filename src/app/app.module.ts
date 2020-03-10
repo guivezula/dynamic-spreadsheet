@@ -11,7 +11,6 @@ import { NgxMaskModule } from 'ngx-mask';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers, effects } from './reducers';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 
 @NgModule({
