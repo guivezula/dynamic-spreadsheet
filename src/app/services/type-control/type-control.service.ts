@@ -15,12 +15,12 @@ export class TypeControlService {
    * @param types
    * method get all the type of columns and create the FormGroup
    */
-  public toFormGroup(types: BaseType<string>[]): FormGroup {
+  public toFormGroup(types: BaseType[]): FormGroup {
     const group: any = {};
 
     types.forEach(type => {
-      group[type.name] = type.required ? new FormControl(type.value || '', Validators.required)
-        : new FormControl(type.value || '');
+      group[type.name] = type.required ? new FormControl('', Validators.required)
+        : new FormControl('');
     });
     return new FormGroup(group);
   }

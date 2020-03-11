@@ -13,12 +13,12 @@ export const updateTableSuccess = createAction(
 
 export const updateTypes = createAction(
   '[Data] Update Types',
-  props<{ baseType: BaseType<string> }>()
+  props<{ baseType: BaseType }>()
 );
 
 export const updateTypesSuccess = createAction(
   '[Data] Update Types Success',
-  props<{ types: BaseType<string>[] }>()
+  props<{ types: BaseType[] }>()
 );
 
 export const updateType = createAction(

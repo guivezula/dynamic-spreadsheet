@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
   public controls: string[] = [];
   public selectOptions: string[] = [];
   public form: FormGroup;
-  public types$: Observable<BaseType<string>[]>;
+  public types$: Observable<BaseType[]>;
   public data$: Observable<any[]>;
   public minRows$: Observable<number>;
 
@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
    */
   public sendForm() {
     if (this.form.valid) {
-      const option: Option<string> = this.form.getRawValue();
+      const option: Option = this.form.getRawValue();
       this.createType(option);
     }
     this.form.reset();
@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
   }
 
   /**
-   * Update the minimun of rows on local storage
+   * Update the minimum of rows on local storage
    * @param minRows is  the emitted value from table
    */
   public updateMinRows(minRows: number) {
@@ -92,10 +92,8 @@ export class HomeComponent implements OnInit {
   private initForm() {
     this.form = this.fb.group({
       name: ['', Validators.required],
-      label: [''],
       required: [false],
       controlType: ['', Validators.required],
-      type: [''],
       options: [[]],
     });
   }
@@ -104,7 +102,7 @@ export class HomeComponent implements OnInit {
    * @param option is the given information typed
    * this function return the TypeBase according to controlType
    */
-  private createType(option: Option<string>) {
+  private createType(option: Option) {
     let baseType = null;
     switch (option.controlType) {
       case 'select':

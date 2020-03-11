@@ -1,11 +1,9 @@
 import { BaseType, ControlType, Option } from './base-type';
 
-export class TextType extends BaseType<string> {
+export class TextType extends BaseType {
     controlType = ControlType.text;
-    type: string;
 
-    constructor(options: Option<string> = {}) {
+    constructor(options: Option = {}) {
       super(options);
-      this.type = options.type || '';
     }
 }

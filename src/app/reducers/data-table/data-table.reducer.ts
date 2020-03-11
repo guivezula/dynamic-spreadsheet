@@ -7,7 +7,7 @@ export const dataTableFeatureKey = 'dataTable';
 
 export interface State {
   data: any[];
-  types: BaseType<string>[];
+  types: BaseType[];
   loading: boolean;
   minRows: number;
 }
@@ -43,7 +43,7 @@ const dataReducer = createReducer(
   })),
 
   on(DataTableActions.updateType, (state, { index, newName }) => {
-    const types: BaseType<string>[] = R.clone(state.types);
+    const types: BaseType[] = R.clone(state.types);
     types[index].name = newName;
     return {
       ...state,

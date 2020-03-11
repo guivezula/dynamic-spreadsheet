@@ -13,7 +13,7 @@ import * as R from 'ramda';
 })
 export class TableComponent implements OnInit, OnDestroy {
 
-  @Input() types$: Observable<BaseType<string>[]> = of([]);
+  @Input() types$: Observable<BaseType[]> = of([]);
   @Input() data: any[];
   @Input() minRows: number;
 
@@ -42,7 +42,7 @@ export class TableComponent implements OnInit, OnDestroy {
    * @param from the initial index of rows to be created
    * @param til the number of rows
    */
-  public addRows(types: BaseType<string>[], from: number, til: number) {
+  public addRows(types: BaseType[], from: number, til: number) {
     for (let index = from; index < til; index++) {
       const array = this.tableForm.get('data') as FormArray;
       array.push(this.controlService.toFormGroup(types));
@@ -75,7 +75,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method to update the minimun of Rows and emits it to the page
+   * Method to update the minimum of Rows and emits it to the page
    */
   public async updateMinRows() {
     const types = await this.types$.pipe(take(1)).toPromise();
@@ -104,7 +104,7 @@ export class TableComponent implements OnInit, OnDestroy {
    * @param types and the last data saved on local storage
    * to update this values on the table when it adds a new column
    */
-  private updateTableData(types: BaseType<string>[]) {
+  private updateTableData(types: BaseType[]) {
     if (this.data.length) {
       const array = this.tableForm.get('data') as FormArray;
       this.data.forEach(item => {
@@ -123,7 +123,7 @@ export class TableComponent implements OnInit, OnDestroy {
    * everytime a new column is created
    */
   private changeFormStatus() {
-    this.subscription = this.types$.subscribe((types: BaseType<string>[]) => {
+    this.subscription = this.types$.subscribe((types: BaseType[]) => {
       if (types.length) {
         this.initForm();
         this.addRows(types, 0, this.minRows);

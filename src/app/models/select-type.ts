@@ -1,10 +1,10 @@
 import { BaseType, ControlType, Option } from './base-type';
 
-export class SelectType extends BaseType<string> {
+export class SelectType extends BaseType {
     controlType = ControlType.select;
     options: string[];
 
-    constructor(options: Option<string> = {}) {
+    constructor(options: Option = {}) {
       super(options);
       this.options = options.options || [];
     }

@@ -1,21 +1,15 @@
 /**
  * Class to dynamically create a FormGroup
  */
-export class BaseType<T> {
-    value: T;
+export class BaseType {
     name: string;
-    label: string;
     required: boolean;
     controlType: ControlType;
-    type: string;
     options: string[];
 
-    constructor(options: Option<T> = {}) {
-      this.value = options.value;
+    constructor(options: Option = {}) {
       this.name = options.name || '';
-      this.label = options.label || '';
       this.required = !!options.required;
-      this.type = options.type || '';
       this.options = options.options || [];
     }
 }
@@ -27,13 +21,10 @@ export enum ControlType {
     'text',
 }
 
-export interface Option<T> {
-    value?: T;
+export interface Option {
     name?: string;
-    label?: string;
     required?: boolean;
     controlType?: 'select' | 'number' | 'date' | 'text';
-    type?: string;
     options?: string[];
 }
 
