@@ -24,6 +24,7 @@ export class TableComponent implements OnInit, OnDestroy {
   public tableForm: FormGroup;
 
   private subscription: Subscription;
+  private readonly MINIMUM_ROWS_NUMBER = 10;
 
   constructor(
     private controlService: TypeControlService,
@@ -78,9 +79,10 @@ export class TableComponent implements OnInit, OnDestroy {
    * Method to update the minimum of Rows and emits it to the page
    */
   public async updateMinRows() {
+    const updatedMinRows = this.minRows + this.MINIMUM_ROWS_NUMBER;
     const types = await this.types$.pipe(take(1)).toPromise();
-    this.addRows(types, this.minRows, this.minRows + 10);
-    this.whenUpdateMinRows.emit(this.minRows + 10);
+    this.addRows(types, this.minRows, updatedMinRows);
+    this.whenUpdateMinRows.emit(updatedMinRows);
   }
 
   /**
