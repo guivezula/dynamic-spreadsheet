@@ -15,12 +15,12 @@
               <label>Column type</label>
               <select #mySelect class="form-control" formControlName="controlType">
                 <option></option>
-                <option *ngFor="let control of controls" [value]="control">{{ control }}</option>
+                <option *ngFor="let control of controls; let i = index" [value]="controlTypeEnum[control]">{{ control }}</option>
               </select>
             </fieldset>
           </div>
         </div>
-        <div class="row" *ngIf="mySelect.value === 'select'">
+        <div class="row" *ngIf="mySelect.value !== '' && mySelect.value == controlTypeEnum.select">
           <div class="col col-10 col-sm-6 w-100">
             <div class="row form-group">
               <div class="col col-8 col-sm-9">

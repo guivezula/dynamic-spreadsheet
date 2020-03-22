@@ -11,6 +11,7 @@ export class BaseType {
       this.name = options.name || '';
       this.required = !!options.required;
       this.options = options.options || [];
+      this.controlType = options.controlType;
     }
 }
 
@@ -24,7 +25,7 @@ export enum ControlType {
 export interface Option {
     name?: string;
     required?: boolean;
-    controlType?: 'select' | 'number' | 'date' | 'text';
+    controlType?: ControlType;
     options?: string[];
 }
 
