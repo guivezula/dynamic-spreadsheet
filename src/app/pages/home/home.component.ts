@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectTypes, selectData, selectMinRows } from 'src/app/reducers/data-table/data-table.selectors';
-import { updateTypes, updateTable, updateType, updateMinRows } from 'src/app/reducers/data-table/data-table.actions';
+import { updateTypes, updateTableTitle, updateMinRows, registerItem } from 'src/app/reducers/data-table/data-table.actions';
+import { DataItem } from 'src/app/models/data';
+import { Update } from '@ngrx/entity';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +19,7 @@ export class HomeComponent implements OnInit {
   public selectOptions: string[] = [];
   public form: FormGroup;
   public types$: Observable<BaseType[]>;
-  public data$: Observable<any[]>;
+  public data$: Observable<DataItem[]>;
   public minRows$: Observable<number>;
   public controlTypeEnum = ControlType;
 
@@ -55,17 +57,16 @@ export class HomeComponent implements OnInit {
    * Receive the table emition and update the local storage
    * @param data is the last updated data
    */
-  public updateTableCell(data: any[]) {
-    this.store.dispatch(updateTable({ data }));
+  public updateTableCell(item: DataItem) {
+    this.store.dispatch(registerItem({ item }));
   }
 
   /**
    * Update the column, and the data according to the new name
    * @param event receives the table emition
    */
-  public updateTableTitle(event: { index: number, newName: string, data: any[] }) {
-    this.updateTableCell(event.data);
-    this.store.dispatch(updateType(event));
+  public updateTableTitle(event: { index: number, title: string, updatedData: Update<DataItem>[]}) {
+    this.store.dispatch(updateTableTitle(event));
   }
 
   /**

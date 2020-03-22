@@ -68,7 +68,7 @@
 <div class="pt-5">
   <app-table
     [types$]="types$"
-    [data]="data$ | async"
+    [data$]="data$"
     [minRows]="minRows$ | async"
     (whenUpdateCell)="updateTableCell($event)"
     (whenUpdateTitle)="updateTableTitle($event)"
