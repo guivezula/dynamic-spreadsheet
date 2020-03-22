@@ -1,7 +1,6 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import * as DataTableActions from './data-table.actions';
 import { BaseType } from 'src/app/models/base-type';
-import * as R from 'ramda';
 import { DataItem } from 'src/app/models/data';
 import { EntityAdapter, createEntityAdapter, EntityState } from '@ngrx/entity';
 
@@ -9,25 +8,31 @@ const dataAdapter: EntityAdapter<DataItem> = createEntityAdapter<DataItem>({
   selectId: data => (`${data.index}.${data.column}`),
 });
 
-const dataEmptyEntity: DataEntity = dataAdapter.getInitialState({});
+const typesAdapter: EntityAdapter<BaseType> = createEntityAdapter<BaseType>({
+  selectId: type => type.name,
+});
 
 export const dataTableFeatureKey = 'dataTable';
-export interface DataEntity extends EntityState<DataItem> {}
 
-export const {
-  selectAll
-} = dataAdapter.getSelectors<State>(state => state.data);
+export interface DataEntity extends EntityState<DataItem> {}
+export interface TypesEntity extends EntityState<BaseType> {}
+
+const dataEmptyEntity: DataEntity = dataAdapter.getInitialState({});
+const typesEmptyEntity: TypesEntity = typesAdapter.getInitialState({});
+
+export const selectAllData = dataAdapter.getSelectors<State>(state => state.data).selectAll;
+export const selectAllTypes = typesAdapter.getSelectors<State>(state => state.types).selectAll;
 
 export interface State {
   data: DataEntity;
-  types: BaseType[];
+  types: TypesEntity;
   loading: boolean;
   minRows: number;
 }
 
 export const initialState: State = {
   data: dataEmptyEntity,
-  types: [],
+  types: typesEmptyEntity,
   loading: false,
   minRows: 10,
 };
@@ -43,35 +48,29 @@ const dataReducer = createReducer(
   on(DataTableActions.registerItemSuccess, (state, { item }) => ({
       ...state,
       data: dataAdapter.upsertOne(item, state.data),
-      loading: true,
+      loading: false,
   })),
 
   on(DataTableActions.updateTypes, state => ({
     ...state,
   })),
 
-  on(DataTableActions.updateTypesSuccess, (state, { types }) => ({
+  on(DataTableActions.updateTypesSuccess, (state, { baseType }) => ({
     ...state,
-    types,
+    types: typesAdapter.addOne(baseType, state.types),
   })),
 
-  on(DataTableActions.updateTableTitle, state => {
-    return {
+  on(DataTableActions.updateTableTitle, state => ({
       ...state,
       loading: true,
-    };
-  }),
+  })),
 
-  on(DataTableActions.updateTableTitle, (state, { index, title, updatedData }) => {
-    const types: BaseType[] = R.clone(state.types);
-    types[index].name = title;
-    return {
+  on(DataTableActions.updateTableTitle, (state, { oldTitle, title, updatedData }) => ({
       ...state,
       data: dataAdapter.updateMany(updatedData, state.data),
-      types,
+      types: typesAdapter.updateOne({ id: oldTitle, changes: { name: title } }, state.types),
       loading: false,
-    };
-  }),
+  })),
 
   on(DataTableActions.updateMinRows, (state, { minRows }) => ({
     ...state,

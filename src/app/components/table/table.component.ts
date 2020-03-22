@@ -19,7 +19,7 @@ export class TableComponent implements OnInit, OnDestroy {
   @Input() minRows: number;
 
   @Output() whenUpdateCell: EventEmitter<DataItem> = new EventEmitter();
-  @Output() whenUpdateTitle: EventEmitter<{index: number, title: string, updatedData: Update<DataItem>[]}> = new EventEmitter();
+  @Output() whenUpdateTitle: EventEmitter<{oldTitle: string, title: string, updatedData: Update<DataItem>[]}> = new EventEmitter();
   @Output() whenUpdateMinRows: EventEmitter<number> = new EventEmitter();
 
   public tableForm: FormGroup;
@@ -67,11 +67,11 @@ export class TableComponent implements OnInit, OnDestroy {
    * @param oldTitle which allows not to loose the saved data field
    * it also emits it to the home page to update it on localstorage
    */
-  public async updateColumnTitle(index: number, title: string, oldTitle: string) {
+  public async updateColumnTitle(title: string, oldTitle: string) {
     const data = await this.data$.pipe(take(1)).toPromise();
     const oldData = data.filter(item => item.column === oldTitle);
     const updatedData: Update<DataItem>[] = oldData.map(item => ({ id: `${item.index}.${item.column}`, changes: { column: title } }));
-    this.whenUpdateTitle.emit({ index, title, updatedData });
+    this.whenUpdateTitle.emit({ oldTitle, title, updatedData });
   }
 
   /**

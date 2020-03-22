@@ -65,7 +65,7 @@ export class HomeComponent implements OnInit {
    * Update the column, and the data according to the new name
    * @param event receives the table emition
    */
-  public updateTableTitle(event: { index: number, title: string, updatedData: Update<DataItem>[]}) {
+  public updateTableTitle(event: { oldTitle: string, title: string, updatedData: Update<DataItem>[]}) {
     this.store.dispatch(updateTableTitle(event));
   }
 

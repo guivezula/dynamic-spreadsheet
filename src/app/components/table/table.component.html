@@ -3,8 +3,8 @@
     <table class="table">
       <thead>
         <th scope="col">#</th>
-        <th *ngFor="let type of types$ | async; let i = index">
-          <input #header class="border-0 font-weight-bold" [value]="type?.name" (blur)="updateColumnTitle(i, header.value, type.name)">
+        <th *ngFor="let type of types$ | async">
+          <input #header class="border-0 font-weight-bold" [value]="type?.name" (blur)="updateColumnTitle(header.value, type.name)">
         </th>
       </thead>
       <tbody *ngFor="let control of frmArrayControls; let i = index">

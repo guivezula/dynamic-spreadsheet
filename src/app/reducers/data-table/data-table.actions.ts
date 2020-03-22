@@ -15,12 +15,12 @@ export const registerItemSuccess = createAction(
 
 export const updateTableTitle = createAction(
   '[Data] Update Table Title',
-  props<{ index: number, title: string, updatedData: Update<DataItem>[] }>()
+  props<{ oldTitle: string, title: string, updatedData: Update<DataItem>[] }>()
 );
 
 export const updateTableTitleSuccess = createAction(
   '[Data] Update Table Title Success',
-  props<{ index: number, title: string, updatedData: Update<DataItem>[] }>()
+  props<{ oldTitle: string, title: string, updatedData: Update<DataItem>[] }>()
 );
 
 export const updateTypes = createAction(
@@ -30,7 +30,7 @@ export const updateTypes = createAction(
 
 export const updateTypesSuccess = createAction(
   '[Data] Update Types Success',
-  props<{ types: BaseType[] }>()
+  props<{ baseType: BaseType }>()
 );
 
 export const updateMinRows = createAction(
