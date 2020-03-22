@@ -12,7 +12,6 @@ import { Store } from '@ngrx/store';
 @Injectable()
 export class DataTableEffects {
 
-  @Effect()
   updateTypes$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(DataTableActions.updateTypes),
@@ -25,12 +24,20 @@ export class DataTableEffects {
     );
   });
 
-  @Effect()
-  updateData$ = createEffect(() => {
+  updateTitle$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(DataTableActions.updateTable),
-      map(({ data }) => {
-        return DataTableActions.updateTableSuccess({ data });
+      ofType(DataTableActions.updateTableTitle),
+      map(props => {
+        return DataTableActions.updateTableTitleSuccess(props);
+      }),
+    );
+  });
+
+  registerItem$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(DataTableActions.registerItem),
+      map(({ item }) => {
+        return DataTableActions.registerItemSuccess({ item });
       }),
     );
   });

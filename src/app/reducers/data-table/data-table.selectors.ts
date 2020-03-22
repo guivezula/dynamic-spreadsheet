@@ -7,5 +7,5 @@ export const selectDataTableState = createFeatureSelector<fromDataTable.State>(
 
 export const selectLoading = createSelector(selectDataTableState, state => state.loading);
 export const selectTypes = createSelector(selectDataTableState, state => state.types);
-export const selectData = createSelector(selectDataTableState, state => state.data);
+export const selectData = createSelector(selectDataTableState, fromDataTable.selectAll);
 export const selectMinRows = createSelector(selectDataTableState, state => state.minRows);
