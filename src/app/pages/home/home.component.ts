@@ -1,14 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ControlType, Option, BaseType } from 'src/app/models/base-type';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SelectType } from 'src/app/models/select-type';
-import { DateType } from 'src/app/models/date-type';
-import { TextType } from 'src/app/models/text-type';
-import { NumberType } from 'src/app/models/number-type';
-import { of, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectTypes, selectData, selectMinRows } from 'src/app/reducers/data-table/data-table.selectors';
-import { updateTypes, updateTable, updateType, updateMinRows } from 'src/app/reducers/data-table/data-table.actions';
+import { updateTypes, updateTableTitle, updateMinRows, registerItem } from 'src/app/reducers/data-table/data-table.actions';
+import { DataItem } from 'src/app/models/data';
+import { Update } from '@ngrx/entity';
 
 @Component({
   selector: 'app-home',
@@ -21,8 +19,9 @@ export class HomeComponent implements OnInit {
   public selectOptions: string[] = [];
   public form: FormGroup;
   public types$: Observable<BaseType[]>;
-  public data$: Observable<any[]>;
+  public data$: Observable<DataItem[]>;
   public minRows$: Observable<number>;
+  public controlTypeEnum = ControlType;
 
   constructor(private fb: FormBuilder, private store: Store<any>) { }
 
@@ -58,17 +57,16 @@ export class HomeComponent implements OnInit {
    * Receive the table emition and update the local storage
    * @param data is the last updated data
    */
-  public updateTableCell(data: any[]) {
-    this.store.dispatch(updateTable({ data }));
+  public updateTableCell(item: DataItem) {
+    this.store.dispatch(registerItem({ item }));
   }
 
   /**
    * Update the column, and the data according to the new name
    * @param event receives the table emition
    */
-  public updateTableTitle(event: { index: number, newName: string, data: any[] }) {
-    this.updateTableCell(event.data);
-    this.store.dispatch(updateType(event));
+  public updateTableTitle(event: { oldTitle: string, title: string, updatedData: Update<DataItem>[]}) {
+    this.store.dispatch(updateTableTitle(event));
   }
 
   /**
@@ -100,23 +98,13 @@ export class HomeComponent implements OnInit {
 
   /**
    * @param option is the given information typed
-   * this function return the TypeBase according to controlType
+   * this function create a type according to option
    */
   private createType(option: Option) {
-    let baseType = null;
-    switch (option.controlType) {
-      case 'select':
-        baseType = new SelectType({...option, options: this.selectOptions });
-        break;
-      case 'text':
-        baseType = new TextType(option);
-        break;
-      case 'date':
-        baseType = new DateType(option);
-        break;
-      case 'number':
-        baseType = new NumberType(option);
-        break;
+    let baseType = new BaseType(option);
+    if (!!this.selectOptions.length) {
+      baseType = { ...baseType, options: this.selectOptions };
+      this.selectOptions = [];
     }
     this.store.dispatch(updateTypes({ baseType }));
   }

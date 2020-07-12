@@ -4,7 +4,8 @@ import { TypeControlService } from 'src/app/services/type-control/type-control.s
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { Observable, of, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
-import * as R from 'ramda';
+import { DataItem } from 'src/app/models/data';
+import { Update } from '@ngrx/entity';
 
 @Component({
   selector: 'app-table',
@@ -14,16 +15,17 @@ import * as R from 'ramda';
 export class TableComponent implements OnInit, OnDestroy {
 
   @Input() types$: Observable<BaseType[]> = of([]);
-  @Input() data: any[];
+  @Input() data$: Observable<DataItem[]>;
   @Input() minRows: number;
 
-  @Output() whenUpdateCell: EventEmitter<any[]> = new EventEmitter();
-  @Output() whenUpdateTitle: EventEmitter<{index: number, newName: string, data: any[]}> = new EventEmitter();
+  @Output() whenUpdateCell: EventEmitter<DataItem> = new EventEmitter();
+  @Output() whenUpdateTitle: EventEmitter<{oldTitle: string, title: string, updatedData: Update<DataItem>[]}> = new EventEmitter();
   @Output() whenUpdateMinRows: EventEmitter<number> = new EventEmitter();
 
   public tableForm: FormGroup;
 
   private subscription: Subscription;
+  private readonly MINIMUM_ROWS_NUMBER = 10;
 
   constructor(
     private controlService: TypeControlService,
@@ -50,37 +52,36 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * The method which emits the last data from the form
+   * The method which emits an item to be added on localstorage
    */
-  public updateTable() {
-    const { data } = this.tableForm.getRawValue();
-    this.whenUpdateCell.emit(data);
+  public updateTable(index: number, column: string, value: any): void {
+    if (value === '') { return; }
+    const item: DataItem = { index, column, value };
+    this.whenUpdateCell.emit(item);
   }
 
   /**
-   * this method adds to the array a new attribute based on
+   * this method adds to the array a new column name based on
    * @param index which is the column changed
-   * @param newName which is the new control name, and
-   * @param oldName which allows not to loose the saved data field
-   * it also emits it to the home page to add it all on local storage
+   * @param title which is the new control name, and
+   * @param oldTitle which allows not to loose the saved data field
+   * it also emits it to the home page to update it on localstorage
    */
-  public updateColumnTitle(index: number, newName: string, oldName: string) {
-    const newData = this.data.map(item => {
-      const clone = R.clone(item);
-      clone[newName] = clone[oldName];
-      return clone;
-    });
-    this.data = newData;
-    this.whenUpdateTitle.emit({ index, newName, data: newData});
+  public async updateColumnTitle(title: string, oldTitle: string) {
+    const data = await this.data$.pipe(take(1)).toPromise();
+    const oldData = data.filter(item => item.column === oldTitle);
+    const updatedData: Update<DataItem>[] = oldData.map(item => ({ id: `${item.index}.${item.column}`, changes: { column: title } }));
+    this.whenUpdateTitle.emit({ oldTitle, title, updatedData });
   }
 
   /**
    * Method to update the minimum of Rows and emits it to the page
    */
   public async updateMinRows() {
+    const updatedMinRows = this.minRows + this.MINIMUM_ROWS_NUMBER;
     const types = await this.types$.pipe(take(1)).toPromise();
-    this.addRows(types, this.minRows, this.minRows + 10);
-    this.whenUpdateMinRows.emit(this.minRows + 10);
+    this.addRows(types, this.minRows, updatedMinRows);
+    this.whenUpdateMinRows.emit(updatedMinRows);
   }
 
   /**
@@ -100,20 +101,14 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method to receive
-   * @param types and the last data saved on local storage
-   * to update this values on the table when it adds a new column
+   * Method to update table values based o data every time a new column is added
    */
-  private updateTableData(types: BaseType[]) {
-    if (this.data.length) {
+  private async updateTableData() {
+    const data = await this.data$.pipe(take(1)).toPromise();
+    if (!!data.length) {
       const array = this.tableForm.get('data') as FormArray;
-      this.data.forEach(item => {
-        const index = this.data.indexOf(item);
-        types.forEach(type => {
-          if (item[type.name]) {
-            array.get(index + `.${type.name}`).setValue(item[type.name]);
-          }
-        });
+      data.forEach(item => {
+        array.get(item.index + `.${item.column}`).setValue(item.value);
       });
     }
   }
@@ -123,11 +118,11 @@ export class TableComponent implements OnInit, OnDestroy {
    * everytime a new column is created
    */
   private changeFormStatus() {
-    this.subscription = this.types$.subscribe((types: BaseType[]) => {
+    this.subscription = this.types$.subscribe(async (types: BaseType[]) => {
       if (types.length) {
         this.initForm();
         this.addRows(types, 0, this.minRows);
-        this.updateTableData(types);
+        await this.updateTableData();
       }
     });
   }

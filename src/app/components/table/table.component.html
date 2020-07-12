@@ -3,8 +3,8 @@
     <table class="table">
       <thead>
         <th scope="col">#</th>
-        <th *ngFor="let type of types$ | async; let i = index">
-          <input #header class="border-0 font-weight-bold" [value]="type?.name" (blur)="updateColumnTitle(i, header.value, type.name)">
+        <th *ngFor="let type of types$ | async">
+          <input #header class="border-0 font-weight-bold" [value]="type?.name" (blur)="updateColumnTitle(header.value, type.name)">
         </th>
       </thead>
       <tbody *ngFor="let control of frmArrayControls; let i = index">
@@ -13,35 +13,35 @@
           <td  class="form-group p-0" *ngFor="let type of types$ | async">
             <ng-container [ngSwitch]="type?.controlType">
               <div *ngSwitchCase="controlType.text">
-                <input
+                <input #textInput
                   class="form-control border-0 rounded-0"
                   type="text"
-                  [formControlName]="type.name"
+                  [formControlName]="type?.name"
                   [ngClass]="{'is-invalid': control.get(type.name)?.errors && control.get(type.name)?.touched }"
-                  (blur)="updateTable()">
+                  (blur)="updateTable(i,type.name,textInput.value)">
               </div>
               <div *ngSwitchCase="controlType.select">
-                <select [formControlName]="type?.name"
+                <select #selectInput [formControlName]="type?.name"
                   class="form-control rounded-0"
                   [ngClass]="{'is-invalid': control.get(type.name)?.errors && control.get(type.name)?.touched }"
-                  (change)="updateTable()">
+                  (change)="updateTable(i, type.name, selectInput.value)">
                   <option *ngFor="let item of type?.options" [value]="item">{{ item }}</option>
                 </select>
               </div>
               <div *ngSwitchCase="controlType.number">
-                <input class="form-control border-0 rounded-0"
+                <input #numberInput class="form-control border-0 rounded-0"
                   type="number"
                   [formControlName]="type.name"
                   [ngClass]="{'is-invalid': control.get(type.name)?.errors && control.get(type.name)?.touched }"
-                  (blur)="updateTable()">
+                  (blur)="updateTable(i, type.name, numberInput.value)">
               </div>
               <div *ngSwitchCase="controlType.date">
-                <input class="form-control border-0 rounded-0"
+                <input #dateInput class="form-control border-0 rounded-0"
                   mask="00/00/0000"
                   [showMaskTyped]="false"
                   [formControlName]="type.name"
                   [ngClass]="{'is-invalid': control.get(type.name)?.errors && control.get(type.name)?.touched }"
-                  (blur)="updateTable()">
+                  (blur)="updateTable(i, type.name, dateInput.value)">
               </div>
             </ng-container>
           </td>
